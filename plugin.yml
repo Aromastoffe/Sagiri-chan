@@ -1,0 +1,9 @@
+main: Fludixx\Sagiri_chan\SagiriAPI
+name: "Sagiri-API"
+version: 0.1
+description: "Sagiri-chan API for your Server"
+api: 3.0.0
+permissions:
+  sagiri.administrative:
+    default: op
+    description: "Ban, mute & Report Permissions"
