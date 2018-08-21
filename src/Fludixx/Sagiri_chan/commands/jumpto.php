@@ -3,6 +3,7 @@ namespace Fludixx\Sagiri_chan\commands;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as f;
 use pocketmine\Player;
 use Fludixx\Sagiri_chan\SagiriAPI as sagiri;
@@ -36,6 +37,10 @@ class jumpto extends Command
 						$sender->setGamemode(3);
 						$sender->teleport($pos);
 						$sagiri->sendMsg("Ok Nii-san!");
+						$name = $sender->getName();
+						$c = new Config("/cloud/users/$name.yml", 2);
+						$c->set("pos", false);
+						$c->save();
 						return true;
 					} else {
 						$sagiri->sendMsg("Nii-san! Du musst ein Spieler sein.");

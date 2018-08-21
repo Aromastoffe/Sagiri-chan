@@ -38,10 +38,9 @@ class HitCheck
 				if (!$oplayer->isOp()) {
 					$pos1 = new Vector3($oplayer->getX(), $oplayer->getY(), $oplayer->getZ());
 					$inbetween = $player->distance($pos1);
-					if ($inbetween >= 3.6) {
-						$oplayer->kick(f::WHITE . "Kicked by " . sagiri::NAME . "\n" . f::RED .
-							"Grund: " . f::WHITE . "Player Reach >= 3.6",
-							false);
+					if($inbetween >= 4) {
+						$event->setCancelled(true);
+						$this->api->getLogger()->info("Action Blocked");
 					}
 				}
 			}

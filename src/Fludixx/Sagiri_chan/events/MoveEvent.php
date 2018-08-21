@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Fludixx\Sagiri_chan\events;
 
 use Fludixx\Sagiri_chan\SagiriAPI as sagiri;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as f;
 use pocketmine\event\Listener;
 
-class JoinEvent
+
+class MoveEvent
 	implements Listener
 {
 	public $api;
@@ -20,16 +21,17 @@ class JoinEvent
 		$this->api = $api;
 	}
 
-	public function onJoin(PlayerJoinEvent $event)
+	public function onMove(PlayerMoveEvent $event)
 	{
+		$prefix = sagiri::NAME;
 		$sagiri = sagiri::getInstance();
 		$player = $event->getPlayer();
-		$pname = $player->getName();
-		$c = new Config("/cloud/users/$pname.yml");
+		$name = $player->getName();
+		$c = new Config("/cloud/users/$name.yml", 2);
 		$accepted = $c->get("accepted");
-		$vdc = $c->get("vdiscord");
-		if($vdc != false) {
-			$sagiri->sendMsg("Du bist mit: ".f::YELLOW."$vdc".f::WHITE." eingeloggt!", $player->getName());
+		if(!$accepted) {
+			$event->setCancelled(true);
+			$this->api->sendDSGVO($player);
 		}
 	}
 }

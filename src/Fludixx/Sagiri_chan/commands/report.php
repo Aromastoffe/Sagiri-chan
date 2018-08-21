@@ -42,6 +42,7 @@ class report extends Command
 			}
 		} else {
 			$sagiri->sendMsg("Nii-san! /report [PLAYER] [REASON]", $sender->getName());
+			return true;
 		}
 	}
 }
