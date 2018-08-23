@@ -19,7 +19,7 @@ use pocketmine\Player;
 use pocketmine\form\CustomForm;
 
 use Fludixx\Sagiri_chan\events\{
-	MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket
+	MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
 };
 
 class SagiriAPI extends PluginBase implements Listener{
@@ -81,19 +81,28 @@ class SagiriAPI extends PluginBase implements Listener{
 		if(!is_file("/cloud/sagiri.yml")) {
 			$this->getLogger()->info(self::PREFIX."Erstelle Sagiri-Configuration... (/cloud/sagiri.yml)");
 			$sagiri = new Config("/cloud/sagiri.yml", 2);
-			$sagiri->set("name", "§cSagiri");
-			$sagiri->set("motd", array("§l§eBEDWARS", "§l§ePUBLIC BETA!", "§l§eJOIN NOW!"));
 			$sagiri->set("anticheat", true);
+			$sagiri->set("server_ports", array());
+			$sagiri->set("main_port", $this->getServer()->getPort());
+			$sagiri->save();
+		}
+		@mkdir("/cloud/".$this->getServer()->getPort());
+		$sagiri = new Config("/cloud/".$this->getServer()->getPort()."/config.yml", 2);
+		if($sagiri->get("name") == false) {
+			$sagiri->set("name", "Sagiri-Server-01");
+			$sagiri->set("player_counter", false);
+			$sagiri->set("players", 0);
 			$sagiri->save();
 		}
 		$sagiri = new Config("/cloud/sagiri.yml", 2);
 		$sagiri->set("ran", 0);
 		$sagiri->save();
-		$this->getScheduler()->scheduleRepeatingTask(new motdChanger($this), 100);
+		//$this->getScheduler()->scheduleRepeatingTask(new motdChanger($this), 100);
 		$this->registerCommands();
 		$this->getServer()->getPluginManager()->registerEvents(new BanListener($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new MuteListener($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new Joinevent($this), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new QueryRegenerateEvent($this), $this);
 		//$this->getServer()->getPluginManager()->registerEvents(new onDataPacket($this), $this);
 		//$this->getServer()->getPluginManager()->registerEvents(new MoveEvent($this), $this);
 
@@ -291,6 +300,7 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 		$i4 = mt_rand(0,9);
 		return $i1.$i2.$i3.$i4;
 	}
+
 
 	public static function getInstance(){
 		return self::$instance;
