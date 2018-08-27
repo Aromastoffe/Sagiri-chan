@@ -28,11 +28,36 @@ class BanListener
 	$pname = $player->getName();
 	$this->api->getLogger()->info(sagiri::PREFIX."Logged in $pname");
 	$banned = $sagiri->getBanned($player->getName());
+	$ip = $player->getAddress();
+	$land = file_get_contents("https://ipapi.co/$ip/country");
 	$c = new Config("/cloud/users/$pname.yml", 2);
 		$banner = $c->get("bannedby");
 		$banneduntil = $c->get("banneduntil");
 		$reason = $c->get("reason");
-		$rbanneduntil = date('r', (int)$banneduntil);
+		date_default_timezone_set('Europe/Berlin');
+		$readTime = date('l, mS F Y  H:i', (int)$banneduntil);
+		if($land == "DE" || $land == "AT" || $land == "IT" || $land == "CH" || substr($ip, 0, 3) == "127") {
+			// TAGE
+			str_replace("Monday", "Montag", $readTime);
+			str_replace("Tuesday", "Dienstag", $readTime);
+			str_replace("Wednesday", "Mittwoch", $readTime);
+			str_replace("Thursday", "Donnerstag", $readTime);
+			str_replace("Friday", "Freitag", $readTime);
+			str_replace("Saturday", "Samstag", $readTime);
+			str_replace("Sunday", "Sonntag", $readTime);
+			// MONATE
+			str_replace("January", "Januar", $readTime);
+			str_replace("February", "Februar", $readTime);
+			str_replace("March", "März", $readTime);
+			str_replace("May", "Mai", $readTime);
+			str_replace("June", "Juni", $readTime);
+			str_replace("July", "Juli", $readTime);
+			str_replace("December", "Dezember", $readTime);
+		}
+		$rbanneduntil = $readTime;
+		if($land == "Undefined" && substr($ip, 0, 3) != "127" && substr($ip, 0, 3) != "192") {
+			$rbanneduntil = "Were Sorry! :( Something went wrong...";
+		}
 	if($banned) {
 		$date = date("U");
 		$this->api->getLogger()->info(sagiri::PREFIX."Compararing $date >= $banneduntil");

@@ -19,7 +19,7 @@ use pocketmine\Player;
 use pocketmine\form\CustomForm;
 
 use Fludixx\Sagiri_chan\events\{
-	MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
+	Knockback, MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
 };
 
 class SagiriAPI extends PluginBase implements Listener{
@@ -84,19 +84,22 @@ class SagiriAPI extends PluginBase implements Listener{
 			$sagiri->set("anticheat", true);
 			$sagiri->set("server_ports", array());
 			$sagiri->set("main_port", $this->getServer()->getPort());
+			$sagiri->set("custom_knockback", false);
 			$sagiri->save();
 		}
-		@mkdir("/cloud/".$this->getServer()->getPort());
-		$sagiri = new Config("/cloud/".$this->getServer()->getPort()."/config.yml", 2);
+		@mkdir("/cloud/servers/".$this->getServer()->getPort());
+		$sagiri = new Config("/cloud/servers/".$this->getServer()->getPort()."/config.yml", 2);
 		if($sagiri->get("name") == false) {
 			$sagiri->set("name", "Sagiri-Server-01");
-			$sagiri->set("player_counter", false);
+			$sagiri->set("player_counter", true);
 			$sagiri->set("players", 0);
 			$sagiri->save();
 		}
 		$sagiri = new Config("/cloud/sagiri.yml", 2);
-		$sagiri->set("ran", 0);
-		$sagiri->save();
+		if($sagiri->get("custom_knockback") == true) {
+			$this->getLogger()->info(self::PREFIX."Custom Knockback is Enabled!");
+			$this->getServer()->getPluginManager()->registerEvents(new Knockback($this), $this);
+		}
 		//$this->getScheduler()->scheduleRepeatingTask(new motdChanger($this), 100);
 		$this->registerCommands();
 		$this->getServer()->getPluginManager()->registerEvents(new BanListener($this), $this);
@@ -204,8 +207,8 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 		}
 		return $counter;
 	}
-	public function getPlayerConfig(Player $player) : Config {
-		return new Config("/cloud/".$player->getName().".yml", 2);
+	public function getPlayerConfig(Player $player) : string {
+		return "/cloud/".$player->getName().".yml";
 	}
 	public function getRegistered(string $playername = "Steve") {
 		return is_file("/cloud/users/$playername.yml");

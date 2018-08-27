@@ -29,7 +29,11 @@ class sban extends Command
 				} else {
 					$name = (string)$args['0'];
 					$days = (int)$args['1'];
-					$reason = (string)$args['2'];
+					$reason = implode(" ", $args);
+					$reason = explode(" ", $reason);
+					unset($reason[0]);
+					unset($reason[1]);
+					$reason = implode(" ", $reason);
 					$sagiri->setBanReason($name, $reason, $sender->getName());
 					$sagiri->setBanTemp($name, $days);
 					$sagiri->setBanned($name, true);

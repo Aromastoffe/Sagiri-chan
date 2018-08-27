@@ -29,7 +29,11 @@ class mute extends Command
 				} else {
 					$name = (string)$args['0'];
 					$days = (int)$args['1'];
-					$reason = (string)$args['2'];
+					$reason = implode(" ", $args);
+					$reason = explode(" ", $reason);
+					unset($reason[0]);
+					unset($reason[1]);
+					$reason = implode(" ", $reason);
 					$sagiri->setMuteReason($name, $reason, $sender->getName());
 					$sagiri->setMuteTemp($name, $days);
 					$sagiri->setMuted($name, true);

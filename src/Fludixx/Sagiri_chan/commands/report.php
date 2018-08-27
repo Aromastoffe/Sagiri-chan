@@ -34,7 +34,7 @@ class report extends Command
 			());
 			$players = $this->api->getServer()->getOnlinePlayers();
 			foreach($players as $player) {
-				if($player->hasPermission("sagiri.administrative")) {
+				if($player->hasPermission("sagiri.administrative") || $player->isOp()) {
 					$player->sendMessage(f::YELLOW.$playerr->getName().f::WHITE." wurde wegen ".f::YELLOW."$args[1]"
 						.f::WHITE." von ".f::YELLOW.$sender->getName().f::WHITE." Reportet! ".f::GREEN."/jumpto $args[0]");
 				}

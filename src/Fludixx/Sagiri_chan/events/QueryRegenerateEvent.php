@@ -25,13 +25,13 @@ class QueryRegenerateEvent
 	{
 		$players = $event->getPlayerCount();
 		$port = $this->api->getServer()->getPort();
-		$server = new Config("/cloud/$port/config.yml", 2);
+		$server = new Config("/cloud/servers/$port/config.yml", 2);
 		$server->set("players", $players);
 		$server->save();
 		$sagiri = new Config("/cloud/sagiri.yml", 2);
 		if ($this->api->getServer()->getPort() == $sagiri->get("main_port")) {
 			$players = $event->getPlayerCount();
-			$c = new Config("/cloud/" . $this->api->getServer()->getPort() . "/config.yml", 2);
+			$c = new Config("/cloud/servers/" . $this->api->getServer()->getPort() . "/config.yml", 2);
 			$name = (string)$c->get("name");
 			if ($c->get("player_counter") == false) {
 				return false;
@@ -40,7 +40,7 @@ class QueryRegenerateEvent
 				$ports = $sagiri->get("server_ports");
 				$allplayers = 0;
 				foreach ($ports as $port) {
-					$server = new Config("/cloud/$port/config.yml");
+					$server = new Config("/cloud/servers/$port/config.yml");
 					$players = (int)$server->get("players");
 					$allplayers = $allplayers + $players;
 
