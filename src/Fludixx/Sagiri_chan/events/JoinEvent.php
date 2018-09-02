@@ -31,5 +31,22 @@ class JoinEvent
 		if($vdc != false) {
 			$sagiri->sendMsg("Du bist mit: ".f::YELLOW."$vdc".f::WHITE." eingeloggt!", $player->getName());
 		}
+
+		if(!$c->get("rank")) {
+			$this->api->giveRank("none", $pname);
+		}
+		if(!is_file("/cloud/groups/none.yml")) {
+			@mkdir("/cloud/groups");
+			$none = new Config("/cloud/groups/none.yml", 2);
+			$none->set("chatformat", "§8[§7Player§8] §f{name}§8:§7 {msg}");
+			$none->set("nametag", "§8[§7PLAYER§8]§f {name}");
+			$none->set("permissions", array());
+			$none->save();
+		}
+		$this->api->reloadPermisons($player);
+		$rank = new Config("/cloud/groups/".$c->get("rank").".yml", 2);
+		$nametag = (string)$rank->get("nametag");
+		$nametag = str_replace("{name", $pname, $nametag);
+		$player->setNameTag($nametag);
 	}
 }

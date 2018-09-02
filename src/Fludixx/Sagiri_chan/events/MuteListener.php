@@ -40,22 +40,26 @@ class MuteListener
 			date_default_timezone_set('Europe/Berlin');
 			$readTime = date('l, mS F Y  H:i', (int)$muteduntil);
 			if($land == "DE" || $land == "AT" || $land == "IT" || $land == "CH" || substr($ip, 0, 3) == "127") {
+				// ORDINAL SUFFIX
+				$readTime = str_replace("th", ".", $readTime);
+				$readTime = str_replace("nd", ".", $readTime);
+				$readTime = str_replace("st", ".", $readTime);
 				// TAGE
-				str_replace("Monday", "Montag", $readTime);
-				str_replace("Tuesday", "Dienstag", $readTime);
-				str_replace("Wednesday", "Mittwoch", $readTime);
-				str_replace("Thursday", "Donnerstag", $readTime);
-				str_replace("Friday", "Freitag", $readTime);
-				str_replace("Saturday", "Samstag", $readTime);
-				str_replace("Sunday", "Sonntag", $readTime);
+				$readTime = str_replace("Monday", "Montag", $readTime);
+				$readTime = str_replace("Tuesday", "Dienstag", $readTime);
+				$readTime = str_replace("Wednesday", "Mittwoch", $readTime);
+				$readTime = str_replace("Thursday", "Donnerstag", $readTime);
+				$readTime = str_replace("Friday", "Freitag", $readTime);
+				$readTime = str_replace("Saturday", "Samstag", $readTime);
+				$readTime = str_replace("Sunday", "Sonntag", $readTime);
 				// MONATE
-				str_replace("January", "Januar", $readTime);
-				str_replace("February", "Februar", $readTime);
-				str_replace("March", "März", $readTime);
-				str_replace("May", "Mai", $readTime);
-				str_replace("June", "Juni", $readTime);
-				str_replace("July", "Juli", $readTime);
-				str_replace("December", "Dezember", $readTime);
+				$readTime = str_replace("January", "Januar", $readTime);
+				$readTime = str_replace("February", "Februar", $readTime);
+				$readTime = str_replace("March", "März", $readTime);
+				$readTime = str_replace("May", "Mai", $readTime);
+				$readTime = str_replace("June", "Juni", $readTime);
+				$readTime = str_replace("July", "Juli", $readTime);
+				$readTime = str_replace("December", "Dezember", $readTime);
 			}
 			$rmuteduntil = $readTime;
 			if($land == "Undefined" && substr($ip, 0, 3) != "127" && substr($ip, 0, 3) != "192") {

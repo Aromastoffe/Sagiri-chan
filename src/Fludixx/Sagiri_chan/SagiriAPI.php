@@ -17,9 +17,10 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as f;
 use pocketmine\Player;
 use pocketmine\form\CustomForm;
+use \pocketmine\permission\PermissionAttachment;
 
 use Fludixx\Sagiri_chan\events\{
-	Knockback, MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
+	ChatEvent, Knockback, MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
 };
 
 class SagiriAPI extends PluginBase implements Listener{
@@ -106,6 +107,7 @@ class SagiriAPI extends PluginBase implements Listener{
 		$this->getServer()->getPluginManager()->registerEvents(new MuteListener($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new Joinevent($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new QueryRegenerateEvent($this), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new ChatEvent($this), $this);
 		//$this->getServer()->getPluginManager()->registerEvents(new onDataPacket($this), $this);
 		//$this->getServer()->getPluginManager()->registerEvents(new MoveEvent($this), $this);
 
@@ -297,11 +299,36 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 	}
 
 	public function genRandomInterger() {
+		mt_srand(time());
 		$i1 = mt_rand(1,9);
 		$i2 = mt_rand(0,9);
 		$i3 = mt_rand(0,9);
 		$i4 = mt_rand(0,9);
 		return $i1.$i2.$i3.$i4;
+	}
+
+	public function giveRank(string $rank = "none", string $playername): void {
+		$c = new Config("/cloud/users/$playername.yml", 2);
+		$c->set("rank", $rank);
+		$c->save();
+	}
+
+	public function checkRank(string $playername): string {
+		$c = new Config("/cloud/users/$playername.yml", 2);
+		$rank = (string)$c->get("rank");
+		return $rank;
+	}
+
+	public function reloadPermisons(Player $player) {
+		$name = $player->getName();
+		$c = new Config("/cloud/users/$name.yml", 2);
+		$rank = new Config("/cloud/groups/".$c->get("rank").".yml", 2);
+		$perms = (array)$rank->get("permissions");
+		$a = $player->addAttachment($this);
+		$a->clearPermissions();
+		foreach($perms as $perm) {
+			$player->addAttachment($this, "$perm", true);
+		}
 	}
 
 
@@ -312,15 +339,16 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 	private function registerCommands(){
 		$map = $this->getServer()->getCommandMap();
 		$commands = [
-			"\\Fludixx\Sagiri_chan\\commands\\sban" => "sban",
-			"\\Fludixx\Sagiri_chan\\commands\\suban" => "suban",
+			"\\Fludixx\Sagiri_chan\\commands\\block" => "block",
+			"\\Fludixx\Sagiri_chan\\commands\\unblock" => "unblock",
 			"\\Fludixx\Sagiri_chan\\commands\\mute" => "mute",
 			"\\Fludixx\Sagiri_chan\\commands\\unmute" => "unmute",
 			"\\Fludixx\Sagiri_chan\\commands\\report" => "report",
 			"\\Fludixx\Sagiri_chan\\commands\\jumpto" => "jumpto",
 			"\\Fludixx\Sagiri_chan\\commands\\dc" => "dc",
 			"\\Fludixx\Sagiri_chan\\commands\\sudo" => "sudo",
-			"\\Fludixx\Sagiri_chan\\commands\\lobby" => "lobby"
+			"\\Fludixx\Sagiri_chan\\commands\\lobby" => "lobby",
+			"\\Fludixx\Sagiri_chan\\commands\\rank" => "rank"
 		];
 		foreach($commands as $class => $cmd){
 			$map->register("sagiri-chan", new $class($this));
