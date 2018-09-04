@@ -79,6 +79,11 @@ class SagiriAPI extends PluginBase implements Listener{
 			if($action == true ) {$action = f::GREEN."sucess";} else {$action = f::RED."failure";}
 			$this->getLogger()->info(self::PREFIX."CLOUDWURZEL/other wurde nicht gefunden! Erstelle... ".$action);
 		}
+		if(!is_dir("/cloud/servers")) {
+			$action = (bool)@mkdir("/cloud/servers");
+			if($action == true ) {$action = f::GREEN."sucess";} else {$action = f::RED."failure";}
+			$this->getLogger()->info(self::PREFIX."CLOUDWURZEL/servers wurde nicht gefunden! Erstelle... ".$action);
+		}
 		if(!is_file("/cloud/sagiri.yml")) {
 			$this->getLogger()->info(self::PREFIX."Erstelle Sagiri-Configuration... (/cloud/sagiri.yml)");
 			$sagiri = new Config("/cloud/sagiri.yml", 2);
