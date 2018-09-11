@@ -4,33 +4,27 @@ declare(strict_types=1);
 
 namespace Fludixx\Sagiri_chan;
 
-use Fludixx\Sagiri_chan\tasks\motdChanger;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\level\Level;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
-use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
-use pocketmine\plugin\MethodEventExecutor;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as f;
 use pocketmine\Player;
-use pocketmine\form\CustomForm;
-use \pocketmine\permission\PermissionAttachment;
 
 use Fludixx\Sagiri_chan\events\{
-	ChatEvent, Knockback, MoveEvent, MuteListener, BanListener, JoinEvent, HitCheck, onDataPacket, QueryRegenerateEvent
+	ChatEvent, Knockback, MuteListener, BanListener, JoinEvent, HitCheck, QueryRegenerateEvent
 };
 
 class SagiriAPI extends PluginBase implements Listener{
 
 	const PREFIX = f::BOLD.f::GOLD."BOT".f::RESET.f::YELLOW." Sagiri-chan ".f::DARK_GRAY."» ".f::WHITE;
 	const NAME = f::BOLD.f::GOLD."BOT".f::RESET.f::YELLOW." Sagiri-chan";
-	const VERSION = 0.2;
+	const VERSION = 0.3;
 	const STABLE = "s";
 	const API = 3;
 	public $canrun = false;
+	public $loaded = NULL;
 	public const OS_ANDROID = 1;
 	public const OS_IOS = 2;
 	public const OS_MAC = 3;
@@ -188,11 +182,11 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 		if(!($this->getFullName() != "Sagiri-API")){$stringi="I";if(!$this->canrun){$op=false;$pl = $this->getServer()
 			->getPluginManager()->getPlugin("Sagiri-AP".$stringi);if($op){$op=false;}$pl->getLogger()->error(
 				self::PREFIX."Ein Unbekannter Fehler ist Aufgetretten! Stelle sicher das du das Originale Plugin verwendest!");return $op;}elseif
-		($this->canrun){$op=true;$this->getLogger()->info("Dem Plugin $name wurde Sagiri API Erteilt!");return $op;
+		($this->canrun){$op=true;$this->getLogger()->info("Dem Plugin $name wurde Sagiri API Erteilt!");$this->loaded = $this->loaded."$name ";return $op;
 		}}else{$stringi="I";if(!$this->canrun){$op=false;$pl = $this->getServer()
 			->getPluginManager()->getPlugin("Sagiri-AP".$stringi);if($op){$op=false;}$pl->getLogger()->error(
 			self::PREFIX."Ein Unbekannter Fehler ist Aufgetretten! Stelle sicher das du das Originale Plugin verwendest!");return $op;}elseif
-		($this->canrun){$op=true;$this->getLogger()->info("Dem Plugin $name wurde Sagiri API Erteilt!");return $op;}}
+		($this->canrun){$op=true;$this->getLogger()->info("Dem Plugin $name wurde Sagiri API Erteilt!");$this->loaded = $this->loaded."$name ";return $op;}}
 	}
 	public function getTimeStamp() : string {
 		$timestap = date("U");
@@ -343,17 +337,29 @@ Weiterhin stimmst du zu, die Serverregeln zur Kenntnis zu nehmen und einzuhalten
 
 	private function registerCommands(){
 		$map = $this->getServer()->getCommandMap();
+		$ver = $map->getCommand("ver");
+		$ver->setLabel("VERSION OLD");
+		$ver->unregister($map);
+		$ban = $map->getCommand("ban");
+		$ban->setLabel("BAN OLD");
+		$ban->unregister($map);
+		$kick = $map->getCommand("kick");
+		$kick->setLabel("KICK OLD");
+		$kick->unregister($map);
+
 		$commands = [
-			"\\Fludixx\Sagiri_chan\\commands\\block" => "block",
-			"\\Fludixx\Sagiri_chan\\commands\\unblock" => "unblock",
-			"\\Fludixx\Sagiri_chan\\commands\\mute" => "mute",
-			"\\Fludixx\Sagiri_chan\\commands\\unmute" => "unmute",
-			"\\Fludixx\Sagiri_chan\\commands\\report" => "report",
-			"\\Fludixx\Sagiri_chan\\commands\\jumpto" => "jumpto",
-			"\\Fludixx\Sagiri_chan\\commands\\dc" => "dc",
-			"\\Fludixx\Sagiri_chan\\commands\\sudo" => "sudo",
-			"\\Fludixx\Sagiri_chan\\commands\\lobby" => "lobby",
-			"\\Fludixx\Sagiri_chan\\commands\\rank" => "rank"
+			"\\Fludixx\\Sagiri_chan\\commands\\block" => "ban",
+			"\\Fludixx\\Sagiri_chan\\commands\\unblock" => "unban",
+			"\\Fludixx\\Sagiri_chan\\commands\\mute" => "mute",
+			"\\Fludixx\\Sagiri_chan\\commands\\unmute" => "unmute",
+			"\\Fludixx\\Sagiri_chan\\commands\\report" => "report",
+			"\\Fludixx\\Sagiri_chan\\commands\\jumpto" => "jumpto",
+			"\\Fludixx\\Sagiri_chan\\commands\\dc" => "dc",
+			"\\Fludixx\\Sagiri_chan\\commands\\sudo" => "sudo",
+			"\\Fludixx\\Sagiri_chan\\commands\\lobby" => "lobby",
+			"\\Fludixx\\Sagiri_chan\\commands\\rank" => "rank",
+			"\\Fludixx\\Sagiri_chan\\commands\\ver" => "ver",
+			"\\Fludixx\\Sagiri_chan\\commands\\kick" => "kick"
 		];
 		foreach($commands as $class => $cmd){
 			$map->register("sagiri-chan", new $class($this));

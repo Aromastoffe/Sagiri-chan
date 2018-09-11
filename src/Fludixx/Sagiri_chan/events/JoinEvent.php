@@ -29,9 +29,10 @@ class JoinEvent
 		$accepted = $c->get("accepted");
 		$vdc = $c->get("vdiscord");
 		if($vdc != false) {
-			$sagiri->sendMsg("Du bist mit: ".f::YELLOW."$vdc".f::WHITE." eingeloggt!", $player->getName());
+			$sagiri->sendMsg("Du bist mit: ".f::UNDERLINE.f::YELLOW."$vdc".f::RESET.f::WHITE." eingeloggt!",
+				$player->getName());
 		}
-
+		$player->allowMovementCheats();
 		if(!$c->get("rank")) {
 			$this->api->giveRank("none", $pname);
 		}
@@ -46,7 +47,7 @@ class JoinEvent
 		$this->api->reloadPermisons($player);
 		$rank = new Config("/cloud/groups/".$c->get("rank").".yml", 2);
 		$nametag = (string)$rank->get("nametag");
-		$nametag = str_replace("{name", $pname, $nametag);
+		$nametag = str_replace("{name}", $pname, $nametag);
 		$player->setNameTag($nametag);
 	}
 }

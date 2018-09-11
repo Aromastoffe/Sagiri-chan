@@ -31,6 +31,11 @@ class ChatEvent
 		$chatformat = (string)$rank->get("chatformat");
 		$chatformat = str_replace("{name}",  $name, $chatformat);
 		$chatformat = str_replace("{msg}",  $msg, $chatformat);
+		$zuZensieren = ["nutte", "wixxer", "wixer", "wichser", "arschloch", "penis", "sau"];
+		$chatformat = str_replace($zuZensieren, "[ZENSIERT]", $chatformat);
+		$chatformat = str_replace("noob", "Pro", $chatformat);
+		$chatformat = str_replace("win10", "Nintendo Switch", $chatformat);
+		$chatformat = str_replace("fortnite", "Fordnait", $chatformat);
 		$event->setFormat($chatformat);
 	}
 }

@@ -11,7 +11,7 @@ class block extends Command
 {
 	private $api;
 	public function __construct(sagiri $api){
-		parent::__construct("block", "Time bans a Player with Sagiri-chan API", "/sban [PLAYER] [TIME IN DAYS] [REASON]");
+		parent::__construct("ban", "Time bans a Player with Sagiri-chan API", "/ban [PLAYER] [TIME IN DAYS] [REASON]");
 		$this->setPermission("sagiri.administrative");
 		$this->api = $api;
 	}
@@ -41,7 +41,7 @@ class block extends Command
 					return true;
 				}
 			} else {
-				$sagiri->sendMsg("/sban [PLAYER] [TIME IN DAYS] [REASON]", $sender->getName());
+				$sagiri->sendMsg("/ban [PLAYER] [TIME IN DAYS] [REASON]", $sender->getName());
 				return true;
 			}
 		}

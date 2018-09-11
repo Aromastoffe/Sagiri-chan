@@ -13,7 +13,7 @@ class unblock extends Command
 
 	public function __construct(sagiri $api)
 	{
-		parent::__construct("unblock", "Unbans a Player with Sagiri-chan API", "/suban [PLAYER]");
+		parent::__construct("unban", "Unbans a Player with Sagiri-chan API", "/unban [PLAYER]");
 		$this->setPermission("sagiri.administrative");
 		$this->api = $api;
 	}

@@ -36,9 +36,9 @@ class rank extends Command
 				} else {
 					if($args[1] == "set") {
 						if(is_file("/cloud/groups/{$args[2]}.yml")) {
-							$player = $this->api->getServer()->getPlayer($args[1]);
+							$player = $this->api->getServer()->getPlayer($args[0]);
 							if(!$player) {
-								$c = new Config("/cloud/users/{$args[2]}.yml", 2);
+								$c = new Config("/cloud/users/{$args[0]}.yml", 2);
 							} else {
 								$c = new Config("/cloud/users/{$player->getName()}.yml", 2);
 							}
